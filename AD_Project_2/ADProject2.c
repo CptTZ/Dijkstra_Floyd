@@ -1,15 +1,18 @@
-// ADProject2.cpp: 定义控制台应用程序的入口点。
-//
+/**
+ * Main method
+ */
 
 #include "common.h"
+
+#include "tools.h"
 
 
 int main()
 {
     printf("INFSCI 2591 Project 2, YIZ141\n");
+    srand(time(NULL));
 
 
 
     return 0;
 }
-

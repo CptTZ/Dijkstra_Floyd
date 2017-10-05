@@ -91,6 +91,7 @@
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderCompileAs>CompileAsC</PrecompiledHeaderCompileAs>
       <PrecompiledHeaderFile />
+      <CLanguageStandard>c99</CLanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -121,6 +122,7 @@
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderCompileAs>CompileAsC</PrecompiledHeaderCompileAs>
       <PrecompiledHeaderFile />
+      <CLanguageStandard>c99</CLanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,9 +150,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="common.h" />
+    <ClInclude Include="DataStruct.h" />
+    <ClInclude Include="tools.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ADProject2.cpp" />
+    <ClCompile Include="ADProject2.c" />
+    <ClCompile Include="tools.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,3 +1,7 @@
+/**
+ * Common headers needed
+ */
+
 #pragma once
 
 #include <stdio.h>
@@ -5,3 +9,4 @@
 #include <tchar.h>
 #include <math.h>
 #include <tchar.h>
+#include <time.h>
