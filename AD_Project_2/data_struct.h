@@ -4,10 +4,12 @@
 
 #pragma once
 
-#define LINK_NODE_SIZE sizeof(struct _link_node)
-#define EDGE_LINKED_SIZE sizeof(struct _edge_linked_list)
-#define GRAPH_SIZE sizeof(struct _graph)
-#define POINTER_SIZE sizeof(int*)
+#define SIZE_LINK_NODE sizeof(struct _link_node)
+#define SIZE_EDGE_LINKED sizeof(struct _edge_linked_list)
+#define SIZE_GRAPH sizeof(struct _graph)
+
+#define SIZE_POINTER sizeof(int*)
+#define SIZE_CHAR sizeof(char)
 
 struct _link_node
 {
@@ -30,10 +32,10 @@ typedef struct _graph
     union
     {
         // 2D adjacent matrix
-        int** AdjacentMatrix2D;
+        int** matrix_2d;
         // Linked List
-        struct _edge_linked_list* AdjacentLinkedList;
+        struct _edge_linked_list* linked_list;
         // 1D lower triangle adjacent matrix
-        int* AdjacentMatrix1D;
-    } data;
+        int* matrix_1d;
+    } adjacent;
 } Graph;

@@ -1,5 +1,5 @@
 /**
- * Tools for this project
+ * Some tools for this project
  */
 
 #pragma once
@@ -28,3 +28,11 @@ clock_t get_current_clock();
 * \return ms delta
 */
 double clock_to_ms(const clock_t stop, const clock_t start);
+
+
+/**
+ * \brief Read all file content
+ * \param path Path to file
+ * \return File content
+ */
+char* read_file_content(char* path);

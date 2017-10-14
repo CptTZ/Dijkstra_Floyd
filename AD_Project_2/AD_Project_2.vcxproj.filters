@@ -9,6 +9,9 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="TestCases">
+      <UniqueIdentifier>{309c0242-dd7d-49cf-8573-3f8141d679e8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h">
@@ -20,6 +23,15 @@
     <ClInclude Include="data_struct.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="floyd.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="dijkstra.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="graph.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ADProject2.c">
@@ -28,8 +40,22 @@
     <ClCompile Include="tools.c">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="floyd.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="dijkstra.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="graph.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram.cd" />
+    <Text Include="t1.txt">
+      <Filter>TestCases</Filter>
+    </Text>
+    <Text Include="t2.txt">
+      <Filter>TestCases</Filter>
+    </Text>
   </ItemGroup>
 </Project>
