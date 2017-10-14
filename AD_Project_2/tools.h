@@ -5,27 +5,26 @@
 #pragma once
 
 #include "common.h"
-
 #include <time.h>
 
 
 /**
- * Get a random integer with upper
- * @param upper Max
- * @return Rnd Int
- */
-int nextRndInt(int upper);
+* \brief Get a random number with 1 - upper
+* \param upper upperbound (inclusive)
+* \return int
+*/
+int next_rnd_int(int upper);
 
 /**
-* Get Current Time Structure
-* @return A time structure
+* \brief Get current CPU clock (For timing)
+* \return clock_t
 */
-clock_t getCurrentClock();
+clock_t get_current_clock();
 
 /**
-* Convert clock delta to ms
-* @param stop End Time
-* @param start Start Time
-* @return delta in ms
+* \brief CPU clock delta to ms
+* \param stop Stop Time
+* \param start Start Time
+* \return ms delta
 */
-double clockToMs(const clock_t stop, const clock_t start);
+double clock_to_ms(const clock_t stop, const clock_t start);

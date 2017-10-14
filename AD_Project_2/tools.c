@@ -4,19 +4,18 @@
 
 #include "tools.h"
 
-int nextRndInt(int upper)
+int next_rnd_int(int upper)
 {
-    // Reference: https://stackoverflow.com/a/13520000
     int rnd = (int)(upper * (rand() / (RAND_MAX + 1.0)));
-    return 1 + rnd;
+    return rnd + 1;
 }
 
-clock_t getCurrentClock()
+clock_t get_current_clock()
 {
     return clock();
 }
 
-double clockToMs(const clock_t stop, const clock_t start)
+double clock_to_ms(const clock_t stop, const clock_t start)
 {
     return (double)(stop - start) * 1000.0 / CLOCKS_PER_SEC;
 }

@@ -17,7 +17,7 @@
     <ClInclude Include="tools.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="DataStruct.h">
+    <ClInclude Include="data_struct.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
