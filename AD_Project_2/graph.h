@@ -11,12 +11,37 @@
 
 
 /**
+ * \brief Generate a complete undirected graph with random weight
+ * \param g Empty graph
+ * \param size Graph size
+ * \param type Graph type
+ * \return running time
+ */
+double create_graph_complete_rand(Graph* g, int size, char type);
+
+/**
  * \brief Generate graph from test cases file
  * \param path Path to text file
+ * \param type Graph type
  * \return New Graph
  */
-Graph* create_graph_from_file(char* path);
+Graph* create_graph_from_file(char* path, char type);
 
+/**
+* \brief Find vertex index by name
+* \param g Graph
+* \param name Vertex name
+* \return index (-1 for no)
+*/
+int find_index_by_vertex_name(Graph* g, char* name);
+
+/**
+* \brief Find vertex name by index
+* \param g Graph
+* \param i Vertex index
+* \return Name
+*/
+char* find_vertex_name_by_index(Graph* g, int i);
 
 /**
  * \brief Print out a graph (Debug)
@@ -27,7 +52,7 @@ int print_graph(Graph *g);
 
 
 /**
- * \brief Freeup RAM
+ * \brief Freeup RAM (Without g itself)
  * \param g Graph
  */
 void free_graph(Graph* g);

@@ -8,7 +8,7 @@
 #define SIZE_EDGE_LINKED sizeof(struct _edge_linked_list)
 #define SIZE_GRAPH sizeof(struct _graph)
 
-#define SIZE_POINTER sizeof(int**)
+#define SIZE_POINTER_1 sizeof(int*)
 #define SIZE_INT sizeof(int)
 #define SIZE_CHAR sizeof(char)
 

@@ -3,9 +3,87 @@
  */
 
 #include "graph.h"
-#include <limits.h>
 
-Graph* create_graph_from_file(char* path)
+/**
+ * \brief Prefix = 'v', names like v1, v2, ..., v10, ..., vn
+ * \param prefix 'v'
+ * \param size vertex size
+ * \return names names array
+ */
+char** gen_vertex_name(char prefix, int size);
+
+/**
+ * \brief Malloc for 2d matrix
+ * \param size size
+ * \return 2d matrix
+ */
+int** malloc_matrix_2d(int size);
+
+/**
+* \brief Malloc for 1d matrix
+* \param size size
+* \return 1d matrix
+*/
+int* malloc_matrix_1d(int size);
+
+/**
+ * \brief Free graph adj
+ * \param g Graph
+ */
+void free_graph_adj(Graph* g);
+
+double create_graph_complete_rand(Graph* g, int size, char type)
+{
+    g->vertex_count = size;
+    g->edge_count = size * (size - 1) / 2; // Formula
+    g->vertex_names = gen_vertex_name('v', size);
+    g->type = type;
+    int tmp;
+
+    // Start constructing data structure
+    switch (type)
+    {
+    case 0:
+        g->adjacent.matrix_2d = malloc_matrix_2d(size);
+        for (int i = 0; i < size; ++i)
+        {
+            for (int j = i; j < size; ++j)
+            {
+                g->adjacent.matrix_2d[i][j] = (i == j ? 0 : next_rnd_int(50));
+            }
+            // Transpose
+            for (int j = 0; j < size; ++j)
+            {
+                g->adjacent.matrix_2d[j][i] = g->adjacent.matrix_2d[i][j];
+            }
+        }
+        break;
+
+    case 1:
+        g->adjacent.matrix_1d = malloc_matrix_1d(g->edge_count + size);
+        tmp = 0;
+        for (int i = 0; i < size; ++i)
+        {
+            for (int j = 0; j <= i; ++j)
+            {
+                g->adjacent.matrix_1d[tmp++] = (i == j ? 0 : next_rnd_int(50));
+            }
+        }
+        break;
+
+    case 2:
+
+        break;
+
+    default:
+        return -1;
+    }
+
+
+    return 0;
+}
+
+Graph* create_graph_from_file(char* path, char type)
 {
     char* file_data = read_file_content(path);
     Graph* g = malloc(SIZE_GRAPH);
@@ -19,20 +97,12 @@ Graph* create_graph_from_file(char* path)
     }
     g->vertex_count = lines;
 
-    // Malloc 2D array and prep vertex names
-    g->adjacent.matrix_2d = malloc(lines * SIZE_POINTER);
-    g->vertex_names = malloc(lines * SIZE_POINTER);
-    for (int i = 0; i < lines; ++i)
-    {
-        g->adjacent.matrix_2d[i] = malloc(lines * SIZE_INT);
-        char* tmp_name = malloc(2);
-        tmp_name[0] = 'A' + i;
-        tmp_name[1] = '\0';
-        g->vertex_names[i] = tmp_name;
-    }
+    // Malloc 2D array and vertex names
+    g->adjacent.matrix_2d = malloc_matrix_2d(lines);
+    g->vertex_names = gen_vertex_name('v', lines);
 
     // Read weight and build the graph
-    int current_line = 0, current_col = 0, j, weight;
+    int current_line = 0, current_col = 0, j, weight, edges = 0, tmp_col;
     for (int i = 0; file_data[i] != '\0'; ++i)
     {
         switch (file_data[i])
@@ -44,7 +114,8 @@ Graph* create_graph_from_file(char* path)
             current_col = 0;
             break;
         case '.':
-            g->adjacent.matrix_2d[current_line][current_col++] = INT_MAX;
+            tmp_col = current_col;
+            g->adjacent.matrix_2d[current_line][current_col++] = (current_line == tmp_col ? 0 : INT_MAX);
             break;
         default:
             // It's weight now
@@ -54,17 +125,92 @@ Graph* create_graph_from_file(char* path)
             }
             g->adjacent.matrix_2d[current_line][current_col++] = weight;
             i = j - 1;
+            edges++;
             break;
         }
     }
+    g->edge_count = edges / 2; // Undirected
 
+    if (type == 1)
+    {
+        int tmp = 0, *tmp_data = malloc_matrix_1d(edges / 2 + lines);
+        for (int i = 0; i < lines; ++i)
+        {
+            for (int k = 0; k <= i; ++k)
+            {
+                tmp_data[tmp++] = g->adjacent.matrix_2d[i][k];
+            }
+        }
+        free_graph_adj(g);
+        g->adjacent.matrix_1d = tmp_data;
+    }
+    else if (type == 2)
+    {
+
+    }
+
+    g->type = type;
     free(file_data);
     return g;
 }
 
+int** malloc_matrix_2d(int size)
+{
+    int** res = (int**)malloc(size * SIZE_POINTER_1);
+    for (int i = 0; i < size; ++i)
+    {
+        res[i] = malloc_matrix_1d(size);
+    }
+    return res;
+}
+
+int* malloc_matrix_1d(int size)
+{
+    return (int*)malloc(size * SIZE_INT);
+}
+
+char** gen_vertex_name(char prefix, int size)
+{
+    char** names = (char**)malloc(size * SIZE_POINTER_1);
+    for (int i = 0; i < size; ++i)
+    {
+        int tmp = i + 1;
+        int len = log10(tmp) + 1;
+        char* tmp_name = malloc((2 + len) * SIZE_CHAR);
+        tmp_name[0] = prefix;
+        for (int j = 0; tmp > 0; ++j)
+        {
+            tmp_name[len - j] = tmp % 10 + '0';
+            tmp /= 10;
+        }
+        tmp_name[len + 1] = '\0';
+        names[i] = tmp_name;
+    }
+    return names;
+}
+
+char* find_vertex_name_by_index(Graph* g, int i)
+{
+    int len = g->vertex_count;
+    if (i > len - 1) return NULL;
+    return g->vertex_names[i];
+}
+
+int find_index_by_vertex_name(Graph* g, char* name)
+{
+    int len = g->vertex_count;
+    for (int i = 0; i < len; ++i)
+    {
+        if (strcmp(name, g->vertex_names[i]) == 0)
+            return i;
+    }
+    return -1;
+}
+
 int print_graph(Graph* g)
 {
-    int ll = g->vertex_count;
+    int ll = g->vertex_count, tmp;
+    printf("Graph have %d vertices, %d edges, internal structure as follows: \n", ll, g->edge_count);
     switch (g->type)
     {
     case 0:
@@ -76,21 +222,22 @@ int print_graph(Graph* g)
                 if (w == INT_MAX)
                     printf(" . ");
                 else
-                    printf("%4d", w);
+                    printf("%3d", w);
             }
             putchar('\n');
         }
         break;
     case 1:
+        tmp = 0;
         for (int i = 0; i < ll; ++i)
         {
-            for (int j = 0; j < i; ++j)
+            for (int j = 0; j <= i; ++j)
             {
-                int w = g->adjacent.matrix_1d[i + j];
+                int w = g->adjacent.matrix_1d[tmp++];
                 if (w == INT_MAX)
                     printf(" . ");
                 else
-                    printf("%4d", w);
+                    printf("%3d", w);
             }
             putchar('\n');
         }
@@ -116,14 +263,16 @@ int print_graph(Graph* g)
     return 0;
 }
 
-void free_graph(Graph* g)
+void free_graph_adj(Graph* g)
 {
     int lines = g->vertex_count;
-    if (g->type == 1) free(g->adjacent.matrix_1d);
-    for (int i = 0; i < lines; ++i)
+    if (g->type == 1)
     {
-        free(g->vertex_names[i]);
-        if (g->type == 1) continue;
+        free(g->adjacent.matrix_1d);
+        return;
+    }
+    for (int i = 1; i < lines; ++i)
+    {
         if (g->type == 0)
         {
             free(g->adjacent.matrix_2d[i]);
@@ -138,7 +287,15 @@ void free_graph(Graph* g)
             free(tmp);
         }
     }
+}
+
+void free_graph(Graph* g)
+{
+    for (int i = 0; i < g->vertex_count; ++i)
+    {
+        free(g->vertex_names[i]);
+    }
+    free_graph_adj(g);
     if (g->type == 2) free(g->adjacent.linked_list);
     free(g->vertex_names);
-    free(g);
 }
