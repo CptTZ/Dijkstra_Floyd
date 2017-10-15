@@ -8,12 +8,16 @@
 #define SIZE_EDGE_LINKED sizeof(struct _edge_linked_list)
 #define SIZE_GRAPH sizeof(struct _graph)
 
-#define SIZE_POINTER sizeof(int*)
+#define SIZE_POINTER sizeof(int**)
+#define SIZE_INT sizeof(int)
 #define SIZE_CHAR sizeof(char)
+
+#define BOOL char
 
 struct _link_node
 {
     int weight;
+    char* name;
     struct _link_node* next;
 };
 
@@ -29,6 +33,7 @@ typedef struct _graph
     unsigned int edge_count,
                  vertex_count; // May have empty value for that
     char type; // 0=2D, 1=1D, 2=List
+    char** vertex_names; // Vertex names
     union
     {
         // 2D adjacent matrix
