@@ -14,6 +14,8 @@
 #define SIZE_CHAR sizeof(char)
 
 #define BOOL char
+#define TRUE 1
+#define FALSE 0
 
 struct _link_node
 {
@@ -46,7 +48,7 @@ typedef struct _graph
     } adjacent;
 } Graph;
 
-// Final result
+// Final printable result
 typedef struct _f_result
 {
     int total_weight;

@@ -40,13 +40,16 @@ int* malloc_matrix_1d(int size);
  */
 void free_graph_adj(Graph* g);
 
+//TODO: Generate sprase graph
+
 double create_graph_complete_rand(Graph* g, int size, char type)
 {
     g->vertex_count = size;
-    g->edge_count = size * (size - 1) / 2; // Formula
+    g->edge_count = size * (size - 1) / 2; // Formula for complete graph
     g->vertex_names = gen_vertex_name('v', size);
     g->type = type;
     int tmp;
+    struct _edge_linked_list* list;
 
     // Start constructing data structure
     switch (type)
@@ -57,7 +60,7 @@ double create_graph_complete_rand(Graph* g, int size, char type)
         {
             for (int j = i; j < size; ++j)
             {
-                g->adjacent.matrix_2d[i][j] = (i == j ? 0 : next_rnd_int(50));
+                g->adjacent.matrix_2d[i][j] = (i == j ? 0 : next_rnd_int(RND_UPPER));
             }
             // Transpose
             for (int j = 0; j < size; ++j)
@@ -74,13 +77,25 @@ double create_graph_complete_rand(Graph* g, int size, char type)
         {
             for (int j = 0; j <= i; ++j)
             {
-                g->adjacent.matrix_1d[tmp++] = (i == j ? 0 : next_rnd_int(50));
+                g->adjacent.matrix_1d[tmp++] = (i == j ? 0 : next_rnd_int(RND_UPPER));
             }
         }
         break;
 
     case 2:
-
+        list = malloc(size * SIZE_EDGE_LINKED);
+        for (int i = 0; i < size; ++i)
+        {
+            list[i].count = 0;
+            list[i].head = NULL;
+            for (int k = 0; k < size; ++k)
+            {
+                if (i == k) continue; // Linked list doesn't take self into consideration
+                add_new_node_to_graph_list(list + i, next_rnd_int(RND_UPPER),
+                    find_vertex_name_by_index(*g, k));
+            }
+        }
+        g->adjacent.linked_list = list;
         break;
 
     default:
@@ -125,7 +140,7 @@ double create_graph_from_file(Graph* g, char* path, char type)
             break;
         case '.':
             tmp_col = current_col;
-            g->adjacent.matrix_2d[current_line][current_col++] = (current_line == tmp_col ? 0 : INT_MAX);
+            g->adjacent.matrix_2d[current_line][current_col++] = (current_line == tmp_col ? 0 : INT_AS_INFI);
             break;
         default:
             // It's weight now
@@ -165,7 +180,7 @@ double create_graph_from_file(Graph* g, char* path, char type)
             for (int k = 0; k < lines; ++k)
             {
                 int w1 = g->adjacent.matrix_2d[i][k];
-                if (w1 == INT_MAX || w1 == 0) continue;
+                if (w1 == INT_AS_INFI || w1 == 0) continue;
                 add_new_node_to_graph_list(list + i, w1, find_vertex_name_by_index(*g, k));
             }
         }
@@ -272,7 +287,7 @@ int print_graph(Graph* g)
             for (int j = 0; j < ll; ++j)
             {
                 int w = g->adjacent.matrix_2d[i][j];
-                if (w == INT_MAX)
+                if (w == INT_AS_INFI)
                     printf(" . ");
                 else
                     printf("%3d", w);
@@ -287,7 +302,7 @@ int print_graph(Graph* g)
             for (int j = 0; j <= i; ++j)
             {
                 int w = g->adjacent.matrix_1d[tmp++];
-                if (w == INT_MAX)
+                if (w == INT_AS_INFI)
                     printf(" . ");
                 else
                     printf("%3d", w);

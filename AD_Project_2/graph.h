@@ -7,6 +7,7 @@
 #include "tools.h"
 #include "data_struct.h"
 
+#define RND_UPPER 50
 
 /**
  * \brief Generate a complete undirected graph with random weight
