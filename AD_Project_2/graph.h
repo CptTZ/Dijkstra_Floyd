@@ -21,11 +21,21 @@ double create_graph_complete_rand(Graph* g, int size, char type);
 
 /**
  * \brief Generate graph from test cases file
+ * \param g Graph
  * \param path Path to text file
  * \param type Graph type
- * \return New Graph
+ * \return Creation time
  */
-Graph* create_graph_from_file(char* path, char type);
+double create_graph_from_file(Graph *g, char* path, char type);
+
+/**
+* \brief Find direct vertex distance by vertex name
+* \param g Graph
+* \param source Source vertex
+* \param target Target vertex
+* \return weight (-1: No route, -2: Wrong graph)
+*/
+int get_node_weight_in_graph_list(Graph g, char* source, char* target);
 
 /**
 * \brief Find vertex index by name

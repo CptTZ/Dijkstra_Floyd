@@ -23,7 +23,11 @@ double clock_to_ms(const clock_t stop, const clock_t start)
 char* read_file_content(char* path)
 {
     FILE* fp = fopen(path, "r");
-    if (fp == NULL) return "";
+    if (fp == NULL)
+    {
+        printf("File not found.\n");
+        return "";
+    }
 
     fseek(fp, 0L, SEEK_END);
     long file_length = ftell(fp);

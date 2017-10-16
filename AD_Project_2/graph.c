@@ -13,6 +13,14 @@
 char** gen_vertex_name(char prefix, int size);
 
 /**
+ * \brief Add a new node to the graph
+ * \param g Graph
+ * \param weight New node weight
+ * \param name New node name (Shallow copy)
+ */
+void add_new_node_to_graph_list(struct _edge_linked_list* g, int weight, char* name);
+
+/**
  * \brief Malloc for 2d matrix
  * \param size size
  * \return 2d matrix
@@ -83,10 +91,11 @@ double create_graph_complete_rand(Graph* g, int size, char type)
     return 0;
 }
 
-Graph* create_graph_from_file(char* path, char type)
+double create_graph_from_file(Graph* g, char* path, char type)
 {
     char* file_data = read_file_content(path);
-    Graph* g = malloc(SIZE_GRAPH);
+
+    clock_t start = get_current_clock();
     g->type = 0;
 
     unsigned int lines = 1;
@@ -107,6 +116,7 @@ Graph* create_graph_from_file(char* path, char type)
     {
         switch (file_data[i])
         {
+        case '\r':
         case ' ':
             break;
         case '\n':
@@ -131,9 +141,10 @@ Graph* create_graph_from_file(char* path, char type)
     }
     g->edge_count = edges / 2; // Undirected
 
+    // If type is not 2D matrix, then convert it
     if (type == 1)
     {
-        int tmp = 0, *tmp_data = malloc_matrix_1d(edges / 2 + lines);
+        int tmp = 0, *tmp_data = malloc_matrix_1d((1 + lines) * lines / 2);
         for (int i = 0; i < lines; ++i)
         {
             for (int k = 0; k <= i; ++k)
@@ -146,12 +157,54 @@ Graph* create_graph_from_file(char* path, char type)
     }
     else if (type == 2)
     {
-
+        struct _edge_linked_list* list = malloc(lines * SIZE_EDGE_LINKED);
+        for (int i = 0; i < lines; ++i)
+        {
+            list[i].count = 0;
+            list[i].head = NULL;
+            for (int k = 0; k < lines; ++k)
+            {
+                int w1 = g->adjacent.matrix_2d[i][k];
+                if (w1 == INT_MAX || w1 == 0) continue;
+                add_new_node_to_graph_list(list + i, w1, find_vertex_name_by_index(g, k));
+            }
+        }
+        free_graph_adj(g);
+        g->adjacent.linked_list = list;
     }
 
     g->type = type;
+    clock_t end = get_current_clock();
+
     free(file_data);
-    return g;
+    return clock_to_ms(end, start);
+}
+
+int get_node_weight_in_graph_list(Graph g, char* source, char* target)
+{
+    if (g.type != 2) return -2;
+    int idx_source = find_index_by_vertex_name(&g, source);
+
+    struct _edge_linked_list src = g.adjacent.linked_list[idx_source];
+    struct _link_node *next = src.head;
+    for (int i = 0; i < src.count; ++i)
+    {
+        if (strcmp(next->name, target) == 0) return i;
+        next = next->next;
+    }
+
+    return -1;
+}
+
+void add_new_node_to_graph_list(struct _edge_linked_list* g, int weight, char* name)
+{
+    struct _link_node* new_node = malloc(SIZE_LINK_NODE);
+    new_node->weight = weight;
+    new_node->name = name;
+    new_node->next = g->head;
+
+    g->head = new_node;
+    g->count++;
 }
 
 int** malloc_matrix_2d(int size)
@@ -252,7 +305,7 @@ int print_graph(Graph* g)
                 printf("%s(%d) ", next->name, next->weight);
                 next = next->next;
             }
-            printf(";\n");
+            printf("\n");
         }
         break;
     default:
@@ -283,7 +336,6 @@ void free_graph_adj(Graph* g)
         {
             struct _link_node* tmp = next;
             next = next->next;
-            free(tmp->name);
             free(tmp);
         }
     }
