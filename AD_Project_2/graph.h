@@ -4,9 +4,7 @@
 
 #pragma once
 
-#include "common.h"
 #include "tools.h"
-
 #include "data_struct.h"
 
 
@@ -26,7 +24,7 @@ double create_graph_complete_rand(Graph* g, int size, char type);
  * \param type Graph type
  * \return Creation time
  */
-double create_graph_from_file(Graph *g, char* path, char type);
+double create_graph_from_file(Graph* g, char* path, char type);
 
 /**
 * \brief Find direct vertex distance by vertex name
@@ -43,7 +41,7 @@ int get_node_weight_in_graph_list(Graph g, char* source, char* target);
 * \param name Vertex name
 * \return index (-1 for no)
 */
-int find_index_by_vertex_name(Graph* g, char* name);
+int find_index_by_vertex_name(Graph g, char* name);
 
 /**
 * \brief Find vertex name by index
@@ -51,14 +49,14 @@ int find_index_by_vertex_name(Graph* g, char* name);
 * \param i Vertex index
 * \return Name
 */
-char* find_vertex_name_by_index(Graph* g, int i);
+char* find_vertex_name_by_index(Graph g, int i);
 
 /**
  * \brief Print out a graph (Debug)
  * \param g Graph
  * \return Result
  */
-int print_graph(Graph *g);
+int print_graph(Graph* g);
 
 
 /**

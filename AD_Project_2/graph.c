@@ -98,7 +98,7 @@ double create_graph_from_file(Graph* g, char* path, char type)
     clock_t start = get_current_clock();
     g->type = 0;
 
-    unsigned int lines = 1;
+    int lines = 1;
     // count lines in order to make array
     for (int i = 0; file_data[i] != '\0'; ++i)
     {
@@ -166,7 +166,7 @@ double create_graph_from_file(Graph* g, char* path, char type)
             {
                 int w1 = g->adjacent.matrix_2d[i][k];
                 if (w1 == INT_MAX || w1 == 0) continue;
-                add_new_node_to_graph_list(list + i, w1, find_vertex_name_by_index(g, k));
+                add_new_node_to_graph_list(list + i, w1, find_vertex_name_by_index(*g, k));
             }
         }
         free_graph_adj(g);
@@ -183,11 +183,11 @@ double create_graph_from_file(Graph* g, char* path, char type)
 int get_node_weight_in_graph_list(Graph g, char* source, char* target)
 {
     if (g.type != 2) return -2;
-    int idx_source = find_index_by_vertex_name(&g, source);
+    int idx_source = find_index_by_vertex_name(g, source);
 
     struct _edge_linked_list src = g.adjacent.linked_list[idx_source];
-    struct _link_node *next = src.head;
-    for (int i = 0; i < src.count; ++i)
+    struct _link_node* next = src.head;
+    for (unsigned int i = 0; i < src.count; ++i)
     {
         if (strcmp(next->name, target) == 0) return i;
         next = next->next;
@@ -228,7 +228,7 @@ char** gen_vertex_name(char prefix, int size)
     for (int i = 0; i < size; ++i)
     {
         int tmp = i + 1;
-        int len = log10(tmp) + 1;
+        int len = (int)log10(tmp) + 1;
         char* tmp_name = malloc((2 + len) * SIZE_CHAR);
         tmp_name[0] = prefix;
         for (int j = 0; tmp > 0; ++j)
@@ -242,19 +242,19 @@ char** gen_vertex_name(char prefix, int size)
     return names;
 }
 
-char* find_vertex_name_by_index(Graph* g, int i)
+char* find_vertex_name_by_index(Graph g, int i)
 {
-    int len = g->vertex_count;
+    int len = g.vertex_count;
     if (i > len - 1) return NULL;
-    return g->vertex_names[i];
+    return g.vertex_names[i];
 }
 
-int find_index_by_vertex_name(Graph* g, char* name)
+int find_index_by_vertex_name(Graph g, char* name)
 {
-    int len = g->vertex_count;
+    int len = g.vertex_count;
     for (int i = 0; i < len; ++i)
     {
-        if (strcmp(name, g->vertex_names[i]) == 0)
+        if (strcmp(name, g.vertex_names[i]) == 0)
             return i;
     }
     return -1;
@@ -300,7 +300,7 @@ int print_graph(Graph* g)
         {
             printf("%s: ", g->vertex_names[i]);
             struct _link_node* next = g->adjacent.linked_list[i].head;
-            for (int j = 0; j < g->adjacent.linked_list[i].count; ++j)
+            for (unsigned int j = 0; j < g->adjacent.linked_list[i].count; ++j)
             {
                 printf("%s(%d) ", next->name, next->weight);
                 next = next->next;
@@ -332,7 +332,7 @@ void free_graph_adj(Graph* g)
             continue;
         }
         struct _link_node* next = g->adjacent.linked_list[i].head;
-        for (int j = 0; j < g->adjacent.linked_list[i].count; ++j)
+        for (unsigned int j = 0; j < g->adjacent.linked_list[i].count; ++j)
         {
             struct _link_node* tmp = next;
             next = next->next;
@@ -343,7 +343,7 @@ void free_graph_adj(Graph* g)
 
 void free_graph(Graph* g)
 {
-    for (int i = 0; i < g->vertex_count; ++i)
+    for (unsigned int i = 0; i < g->vertex_count; ++i)
     {
         free(g->vertex_names[i]);
     }

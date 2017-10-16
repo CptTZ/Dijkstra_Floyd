@@ -7,6 +7,7 @@
 #define SIZE_LINK_NODE sizeof(struct _link_node)
 #define SIZE_EDGE_LINKED sizeof(struct _edge_linked_list)
 #define SIZE_GRAPH sizeof(struct _graph)
+#define SIZE_RESULT sizeof(struct _f_result)
 
 #define SIZE_POINTER_1 sizeof(int*)
 #define SIZE_INT sizeof(int)
@@ -44,3 +45,10 @@ typedef struct _graph
         int* matrix_1d;
     } adjacent;
 } Graph;
+
+// Final result
+typedef struct _f_result
+{
+    int total_weight;
+    char* route;
+} Result;
