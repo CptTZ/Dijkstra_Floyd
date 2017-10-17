@@ -3,6 +3,7 @@
  */
 
 #include "tools.h"
+#include "data_struct.h"
 
 int next_rnd_int(int upper)
 {

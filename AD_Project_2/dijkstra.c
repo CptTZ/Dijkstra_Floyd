@@ -21,6 +21,85 @@ int min_dist_current_vertex(int vertex_count, int* dist, BOOL* final)
     return min_idx;
 }
 
+void dij_list(Graph g, int idx_target, int* path, int* distance, BOOL* prev)
+{
+    int v_cout = g.vertex_count;
+
+    // Find every shortest path starts from src
+    for (int i = 0; i < v_cout; ++i)
+    {
+        int min_idx = min_dist_current_vertex(v_cout, distance, prev);
+        int curr_distance = distance[min_idx];
+        prev[min_idx] = TRUE;
+
+        // Already found the shortest path
+        // Not doing all-pairs for now
+        if (min_idx == idx_target) break;
+
+        // Do the 'distance value' update iteration
+        for (int j = 0; j < v_cout; ++j)
+        {
+            int current_vertex_weight =
+                get_node_weight_in_graph_list_by_index(g, min_idx, j);
+            // Not found is not connected
+            if (current_vertex_weight == -1) current_vertex_weight = INT_AS_INFI;
+
+            int possible_next_distance = curr_distance + current_vertex_weight;
+            if (prev[j] == FALSE
+                && current_vertex_weight != 0
+                && curr_distance != INT_AS_INFI
+                && possible_next_distance < distance[j])
+            {
+                distance[j] = possible_next_distance;
+                path[j] = min_idx;
+            }
+        }
+    }
+}
+
+void dij_1d(Graph g, int idx_target, int* path, int* distance, BOOL* prev)
+{
+    int v_cout = g.vertex_count,
+        *g_matrix = g.adjacent.matrix_1d;
+
+    // Find every shortest path starts from src
+    for (int i = 0; i < v_cout; ++i)
+    {
+        int min_idx = min_dist_current_vertex(v_cout, distance, prev);
+        int curr_distance = distance[min_idx];
+        prev[min_idx] = TRUE;
+
+        // Already found the shortest path
+        // Not doing all-pairs for now
+        if (min_idx == idx_target) break;
+
+        // Do the 'distance value' update iteration
+        for (int j = 0; j < v_cout; ++j)
+        {
+            // Flatten the 2D index to 1D index
+            int ii = min_idx, jj = j;
+            if (ii < jj)
+            {
+                ii ^= jj;
+                jj ^= ii;
+                ii ^= jj;
+            }
+            // Lower triangle trick
+            int new_idx = ii * (ii + 1) / 2 + jj,
+                possible_next_distance = curr_distance + g_matrix[new_idx];
+
+            if (prev[j] == FALSE
+                && g_matrix[new_idx] != 0
+                && curr_distance != INT_AS_INFI
+                && possible_next_distance < distance[j])
+            {
+                distance[j] = possible_next_distance;
+                path[j] = min_idx;
+            }
+        }
+    }
+}
+
 void dij_2d(Graph g, int idx_target, int* path, int* distance, BOOL* prev)
 {
     int v_cout = g.vertex_count,
@@ -112,9 +191,11 @@ double dijkstra(Graph g, char* source, char* target, Result* result)
     }
     else if (g.type == 1)
     {
+        dij_1d(g, idx_end, path, distance, previous_state);
     }
     else if (g.type == 2)
     {
+        dij_list(g, idx_end, path, distance, previous_state);
     }
     else return -1;
 

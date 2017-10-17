@@ -28,6 +28,15 @@ double create_graph_complete_rand(Graph* g, int size, char type);
 double create_graph_from_file(Graph* g, char* path, char type);
 
 /**
+* \brief Find direct vertex distance by vertex index
+* \param g Graph
+* \param src Source vertex index
+* \param target Target vertex index
+* \return weight (-1: No route, -2: Wrong graph)
+*/
+int get_node_weight_in_graph_list_by_index(Graph g, int src, int target);
+
+/**
 * \brief Find direct vertex distance by vertex name
 * \param g Graph
 * \param source Source vertex
@@ -51,6 +60,12 @@ int find_index_by_vertex_name(Graph g, char* name);
 * \return Name
 */
 char* find_vertex_name_by_index(Graph g, int i);
+
+/**
+ * \brief Free result's route
+ * \param r Resut
+ */
+void free_result(Result* r);
 
 /**
  * \brief Print out a graph (Debug)

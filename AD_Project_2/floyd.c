@@ -44,7 +44,7 @@ int** floyd_2d(Graph g, int** floyd_path)
 // Restore path by vertex index
 int* gen_path_f(int** floyd_path, int src, int end, int count_vertex)
 {
-    if (floyd_path[src][end] == -1) return "No path found";
+    if (floyd_path[src][end] == -1) return "No path found!\n";
     int* path_info = malloc(count_vertex * SIZE_INT);
     // Initialize the path info with -1 path
     for (int i = 0; i < count_vertex; ++i)

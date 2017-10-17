@@ -17,8 +17,9 @@ char** gen_vertex_name(char prefix, int size);
  * \param g Graph
  * \param weight New node weight
  * \param name New node name (Shallow copy)
+ * \param id New node id
  */
-void add_new_node_to_graph_list(struct _edge_linked_list* g, int weight, char* name);
+void add_new_node_to_graph_list(struct _edge_linked_list* g, int weight, char* name, int id);
 
 /**
  * \brief Malloc for 2d matrix
@@ -91,8 +92,7 @@ double create_graph_complete_rand(Graph* g, int size, char type)
             for (int k = 0; k < size; ++k)
             {
                 if (i == k) continue; // Linked list doesn't take self into consideration
-                add_new_node_to_graph_list(list + i, next_rnd_int(RND_UPPER),
-                    find_vertex_name_by_index(*g, k));
+                add_new_node_to_graph_list(list + i, next_rnd_int(RND_UPPER), find_vertex_name_by_index(*g, k), k);
             }
         }
         g->adjacent.linked_list = list;
@@ -181,7 +181,7 @@ double create_graph_from_file(Graph* g, char* path, char type)
             {
                 int w1 = g->adjacent.matrix_2d[i][k];
                 if (w1 == INT_AS_INFI || w1 == 0) continue;
-                add_new_node_to_graph_list(list + i, w1, find_vertex_name_by_index(*g, k));
+                add_new_node_to_graph_list(list + i, w1, find_vertex_name_by_index(*g, k), k);
             }
         }
         free_graph_adj(g);
@@ -195,6 +195,21 @@ double create_graph_from_file(Graph* g, char* path, char type)
     return clock_to_ms(end, start);
 }
 
+int get_node_weight_in_graph_list_by_index(Graph g, int ii, int jj)
+{
+    if (ii == jj) return 0;
+
+    struct _edge_linked_list src = g.adjacent.linked_list[ii];
+    struct _link_node* next = src.head;
+    for (unsigned int i = 0; i < src.count; ++i)
+    {
+        if (next->id == jj) return next->weight;
+        next = next->next;
+    }
+
+    return -1;
+}
+
 int get_node_weight_in_graph_list(Graph g, char* source, char* target)
 {
     if (g.type != 2) return -2;
@@ -204,19 +219,20 @@ int get_node_weight_in_graph_list(Graph g, char* source, char* target)
     struct _link_node* next = src.head;
     for (unsigned int i = 0; i < src.count; ++i)
     {
-        if (strcmp(next->name, target) == 0) return i;
+        if (strcmp(next->name, target) == 0) return next->weight;
         next = next->next;
     }
 
     return -1;
 }
 
-void add_new_node_to_graph_list(struct _edge_linked_list* g, int weight, char* name)
+void add_new_node_to_graph_list(struct _edge_linked_list* g, int weight, char* name, int id)
 {
     struct _link_node* new_node = malloc(SIZE_LINK_NODE);
     new_node->weight = weight;
     new_node->name = name;
     new_node->next = g->head;
+    new_node->id = id;
 
     g->head = new_node;
     g->count++;
@@ -331,6 +347,12 @@ int print_graph(Graph* g)
     return 0;
 }
 
+void free_result(Result* r)
+{
+    if (r->route == NULL) return;
+    free(r->route);
+}
+
 void free_graph_adj(Graph* g)
 {
     int lines = g->vertex_count;
@@ -358,6 +380,7 @@ void free_graph_adj(Graph* g)
 
 void free_graph(Graph* g)
 {
+    if (g->vertex_names == NULL)return;
     for (unsigned int i = 0; i < g->vertex_count; ++i)
     {
         free(g->vertex_names[i]);

@@ -59,18 +59,18 @@ int main()
     srand(time(NULL));
 
     Graph t1, t2, t3;
-    Result r1, r2, r3;
+    Result r1, r2;
 
     char *start = "v2",
         *end = "v8";
 
     create_graph_from_file(&t1, "E:\\Source\\C\\AD_Project_2\\AD_Project_2\\t1.txt", 0);
-    create_graph_from_file(&t2, "E:\\Source\\C\\AD_Project_2\\AD_Project_2\\t2.txt", 0);
+    create_graph_from_file(&t2, "E:\\Source\\C\\AD_Project_2\\AD_Project_2\\t2.txt", 2);
     create_graph_complete_rand(&t3, 10, 2);
 
-    /*print_graph(&t1);
-    print_graph(&t2);
-    print_graph(&t3);*/
+    //print_graph(&t1);
+    //print_graph(&t2);
+    //print_graph(&t3);
 
     dijkstra(t2, start, end, &r1);
     floyd(t1, start, end, &r2);
@@ -81,6 +81,8 @@ int main()
     free_graph(&t1);
     free_graph(&t2);
     free_graph(&t3);
+    free_result(&r1);
+    free_result(&r2);
 
     return 0;
 }

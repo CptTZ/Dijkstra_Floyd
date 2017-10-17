@@ -20,6 +20,7 @@
 struct _link_node
 {
     int weight;
+    int id;
     char* name;
     struct _link_node* next;
 };
