@@ -52,5 +52,5 @@ typedef struct _graph
 typedef struct _f_result
 {
     int total_weight;
-    char* route;
+    char** route;
 } Result;
