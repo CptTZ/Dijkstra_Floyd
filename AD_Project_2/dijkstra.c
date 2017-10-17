@@ -199,6 +199,8 @@ double dijkstra(Graph g, char* source, char* target, Result* result)
     }
     else return -1;
 
+    result->no_output = FALSE;
+    result->resolver = "dijkstra";
     result->total_weight = distance[idx_end];
     if (result->total_weight >= 0)
     {

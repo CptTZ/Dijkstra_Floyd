@@ -52,6 +52,8 @@ typedef struct _graph
 // Final printable result
 typedef struct _f_result
 {
+    BOOL no_output;
+    char* resolver;
     int total_weight;
     char** route;
 } Result;

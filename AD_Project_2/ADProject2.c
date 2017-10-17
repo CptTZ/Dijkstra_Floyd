@@ -43,8 +43,9 @@ void show_solution(Result r, char* src, char* end)
         printf("No path between %s - %s:\n", src, end);
         return;
     }
-    printf("Shortest path between %s - %s:\n", src, end);
+    printf("Shortest path between %s - %s, using '%s' algorithm:\n", src, end, r.resolver);
     printf("  Distance is: %d.\n  The path is: ", r.total_weight);
+    if (r.no_output) return;
     for (int i = 0; r.route[i] != NULL; ++i)
     {
         printf("%s", r.route[i]);
@@ -64,7 +65,7 @@ int main()
     char *start = "v2",
         *end = "v8";
 
-    create_graph_from_file(&t1, "E:\\Source\\C\\AD_Project_2\\AD_Project_2\\t1.txt", 0);
+    create_graph_from_file(&t1, "E:\\Source\\C\\AD_Project_2\\AD_Project_2\\t1.txt", 2);
     create_graph_from_file(&t2, "E:\\Source\\C\\AD_Project_2\\AD_Project_2\\t2.txt", 2);
     create_graph_complete_rand(&t3, 10, 2);
 
@@ -73,7 +74,7 @@ int main()
     //print_graph(&t3);
 
     dijkstra(t2, start, end, &r1);
-    floyd(t1, start, end, &r2);
+    floyd(t2, start, end, &r2);
 
     show_solution(r1, start, end);
     show_solution(r2, start, end);

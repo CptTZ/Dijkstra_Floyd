@@ -4,6 +4,79 @@
 
 #include "floyd.h"
 
+// The floyd_warshall iteration
+void floyd_iteration(int** floyd_path, int vex_count, int** ans)
+{
+    // Keep comparing all nodes
+    for (int i = 0; i < vex_count; ++i)
+    {
+        for (int j = 0; j < vex_count; ++j)
+        {
+            for (int k = 0; k < vex_count; ++k)
+            {
+                int possible_short = ans[j][i] + ans[i][k];
+                if (possible_short < ans[j][k])
+                {
+                    ans[j][k] = possible_short;
+                    floyd_path[j][k] = floyd_path[j][i];
+                }
+            }
+        }
+    }
+}
+
+int** floyd_link(Graph g, int** floyd_path)
+{
+    int vex_count = g.vertex_count;
+    int** ans = malloc(vex_count * SIZE_POINTER_1);
+    int aux_i = 0;
+
+    // Copy the graph's adjacent matrix and init the path
+    for (int i = 0; i < vex_count; ++i)
+    {
+        ans[i] = malloc(vex_count * SIZE_INT);
+        for (int j = 0; j < vex_count; ++j)
+        {
+            int weight = get_node_weight_in_graph_list_by_index(g, i, j);
+            ans[i][j] = weight == -1 ? INT_AS_INFI : weight;
+            floyd_path[i][j] = j;
+        }
+    }
+
+    floyd_iteration(floyd_path, vex_count, ans);
+
+    return ans;
+}
+
+int** floyd_1d(Graph g, int** floyd_path)
+{
+    int vex_count = g.vertex_count;
+    int* g_matrix = g.adjacent.matrix_1d;
+    int** ans = malloc(vex_count * SIZE_POINTER_1);
+
+    // Copy the graph's adjacent matrix and init the path
+    for (int i = 0; i < vex_count; ++i)
+    {
+        ans[i] = malloc(vex_count * SIZE_INT);
+        for (int j = 0; j < vex_count; ++j)
+        {
+            int ii = i, jj = j;
+            if (ii < jj)
+            {
+                ii ^= jj;
+                jj ^= ii;
+                ii ^= jj;
+            }
+            ans[i][j] = g_matrix[ii * (ii + 1) / 2 + jj];
+            floyd_path[i][j] = j;
+        }
+    }
+
+    floyd_iteration(floyd_path, vex_count, ans);
+
+    return ans;
+}
+
 int** floyd_2d(Graph g, int** floyd_path)
 {
     int vex_count = g.vertex_count;
@@ -21,22 +94,7 @@ int** floyd_2d(Graph g, int** floyd_path)
         }
     }
 
-    // Keep comparing all nodes
-    for (int i = 0; i < vex_count; ++i)
-    {
-        for (int j = 0; j < vex_count; ++j)
-        {
-            for (int k = 0; k < vex_count; ++k)
-            {
-                int possible_short = ans[j][i] + ans[i][k];
-                if (possible_short < ans[j][k])
-                {
-                    ans[j][k] = possible_short;
-                    floyd_path[j][k] = floyd_path[j][i];
-                }
-            }
-        }
-    }
+    floyd_iteration(floyd_path, vex_count, ans);
 
     return ans;
 }
@@ -94,12 +152,16 @@ double floyd(Graph g, char* source, char* target, Result* result)
     }
     else if (g.type == 1)
     {
+        floyd_answer = floyd_1d(g, floyd_path);
     }
     else if (g.type == 2)
     {
+        floyd_answer = floyd_link(g, floyd_path);
     }
     else return -1;
 
+    result->no_output = FALSE;
+    result->resolver = "floyd";
     result->total_weight = floyd_answer[idx_src][idx_end];
     if (result->total_weight >= 0) // There is a path
     {
